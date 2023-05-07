@@ -11,4 +11,4 @@ jobs:
             - name: Install dependencies
               run: npm install
             - name: Run commitlint
-              run: npx commitlint --from=$GITHUB_SHA^ --to=$GITHUB_SHA --config .commitlintrc.js
+              run: npx commitlint --from=$GITHUB_SHA^ --to=$GITHUB_SHA --config .commitlint.config.js
