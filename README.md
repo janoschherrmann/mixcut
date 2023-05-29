@@ -1,21 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Mixcut
 
-## Getting Started
+## Local setup and installation
 
-First, run the development server:
+In order to start working on this project, clone it to your local machine and run `npm install` to install all dependencies. You can then run `npm run dev` in order to start up the project on your machine.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+## How to contribute
+
+To work on a new feature, create a new branch from `main`, with `git switch -c [your-branch-name]`. From there, you can use regular Git workflows to save your work and push it back to the remote repository. Please be aware that pushing directly to `main` is not allowed, in order to make sure that we don't break our production app. If you want to merge your changes back into `main`, please open up a pull request. After your code is reviewed and all checks run through smoothly, you're ready to merge.
+
+## Semantic Merge Requests
+
+Format: <type>(<scope>): <subject>
+<scope> is optional
+
+Example
+
+```feat: add hat wobble
+^--^ ^------------^
+| |
+| +-> Summary in present tense.
+|
++-------> Type: chore, docs, feat, fix, refactor, style, or test.
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+More Examples:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-[http://localhost:3000/api/hello](http://localhost:3000/api/hello) is an endpoint that uses [Route Handlers](https://beta.nextjs.org/docs/routing/route-handlers). This endpoint can be edited in `app/api/hello/route.ts`.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+build: (dev changes related to the build system (involving scripts, configurations or tools) and package dependencies)
+ci: (dev changes related to the continuous integration and deployment system - involving scripts, configurations or tools)
+chore: (updating grunt tasks etc; no production code change)
+docs: (doc changes to the documentation)
+feat: (prod changes related to new backward-compatible abilities or functionality.)
+fix: (prod changes related to backward-compatible bug fixes)
+perf: (prod changes related o backward-compatible performance improvements)
+refactor: (dev changes related to modifying the codebase, which neither adds a feature nor fixes a bug - e.g removing redundant code, renaming variables)
+revert:
+test: (dev changes related to tests - e.g. refactoring existing tests or adding new tests.)
