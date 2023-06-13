@@ -11,8 +11,6 @@ const Dropzone = ({ handleDropVideos }: { handleDropVideos: (videos: File[]) => 
   const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
     // Handle rejected files, by showing an error toast or something
     console.log(fileRejections)
-    if (fileRejections.length > 0) {
-    }
 
     // Do something with the files
 
@@ -40,7 +38,7 @@ const Dropzone = ({ handleDropVideos }: { handleDropVideos: (videos: File[]) => 
       {isDragActive ? (
         <p>Drop the videos here ...</p>
       ) : (
-        <p>Drag 'n' drop your videos here, or click to select videos</p>
+        <p>Drag &#39;n&#39; drop your videos here, or click to select videos</p>
       )}
     </div>
   )
