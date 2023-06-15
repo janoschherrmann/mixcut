@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import Dropzone from '@/lib/components/Dropzone'
 import VideoPlayer from '@/lib/components/VideoPlayer'
-//Test
+
 const Home = () => {
   const [videos, setVideos] = useState<File[]>([])
 
