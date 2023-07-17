@@ -1,45 +1,57 @@
 'use client'
-import { useCallback } from 'react'
+import { useCallback, useContext } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import clsx from 'clsx'
 import { VideoIcon } from '@radix-ui/react-icons'
+import { useVideoContext } from '../contexts/VideoContext'
 
-const Dropzone = ({ handleDropVideos }: { handleDropVideos: (videos: File[]) => void }) => {
-  const MAX_FILES = 2
-  const MAX_FILE_SIZE = 50000000 // 50MB
+type DropzoneProps = {
+  videoId: 'firstSource' | 'secondSource'
+  idleText?: string
+  activeDropText?: string
+}
 
-  const onDrop = useCallback((acceptedFiles: File[], fileRejections: FileRejection[]) => {
+const MAX_FILES = 1
+const MAX_FILE_SIZE = 50000000 // 50MB
+
+const Dropzone = ({
+  videoId,
+  idleText = 'Drag and drop your video here, or click to select a video',
+  activeDropText = 'Drop the videos here ...'
+}: DropzoneProps) => {
+  const videoContext = useVideoContext()
+
+  const onDrop = useCallback((acceptedFile: File, fileRejections: FileRejection[]) => {
     // Handle rejected files, by showing an error toast or something
-    console.log(fileRejections)
+    if (fileRejections.length > 0) {
+      console.log(fileRejections)
+    }
 
-    // Do something with the files
-
-    console.log(acceptedFiles)
-    handleDropVideos(acceptedFiles)
+    videoContext.setSource(videoId, acceptedFile)
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
+    onDrop: (acceptedFiles, fileRejections) => onDrop(acceptedFiles[0], fileRejections),
     maxFiles: MAX_FILES,
     maxSize: MAX_FILE_SIZE,
-    accept: { 'video/*': ['.mp4', '.mov'] }
+    accept: { 'video/*': ['.mp4'] }
   })
 
   return (
-    <div
-      {...getRootProps({
-        className: clsx(
-          'border border-dotted rounded-md p-4 text-center bg-zinc-50 flex flex-col',
-          isDragActive ? 'border-zinc-600' : 'border-zinc-200'
-        )
-      })}>
-      <input {...getInputProps()} />
-      <VideoIcon className='mx-auto h-6 w-6' />
-      {isDragActive ? (
-        <p>Drop the videos here ...</p>
-      ) : (
-        <p>Drag &#39;n&#39; drop your videos here, or click to select videos</p>
-      )}
+    <div className='relative w-full aspect-[16/9]'>
+      <div
+        {...getRootProps({
+          className: clsx(
+            'border border-dotted rounded-md p-4 text-center bg-zinc-900 flex flex-col inset h-full w-full justify-center items-center',
+            isDragActive ? 'border-zinc-400' : 'border-zinc-700'
+          )
+        })}>
+        <input {...getInputProps()} />
+        <div className=''>
+          <VideoIcon className='mx-auto h-8 w-8 text-white decoration-white' />
+          <p className='pt-2 text-sm max-w-xs'>{isDragActive ? activeDropText : idleText}</p>
+        </div>
+      </div>
     </div>
   )
 }
