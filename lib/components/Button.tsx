@@ -1,9 +1,11 @@
-import { ButtonHTMLAttributes, ReactNode } from 'react'
+import { ButtonHTMLAttributes } from 'react'
 
-type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  children: ReactNode
+export const Button = ({ children, ...props }: ButtonHTMLAttributes<HTMLButtonElement>) => {
+  return (
+    <button
+      className='bg-zinc-800 hover:bg-zinc-700 rounded-sm text-gray-300 px-2 py-1 text-xs'
+      {...props}>
+      {children}
+    </button>
+  )
 }
-
-const Button = ({ children }): ButtonProps => <button {...props}>{children}</button>
-
-export default Button
