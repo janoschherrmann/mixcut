@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { createFFmpeg, fetchFile } from '@ffmpeg/ffmpeg'
 
-import Dropzone from '@/lib/components/Dropzone'
-import VideoPlayer from '@/lib/components/VideoPlayer'
+import { Dropzone } from '@/lib/components/Dropzone'
+import { VideoPlayer } from '@/lib/components/VideoPlayer'
 import { useVideoContext } from '@/lib/contexts/VideoContext'
 
 const ffmpeg = createFFmpeg({
@@ -55,12 +55,12 @@ const Home = () => {
                 videoIndex='firstSource'
               />
             )}
-            {!videoState.firstSource.file && <Dropzone videoId='firstSource' />}
+            {!videoState.firstSource.file && <Dropzone videoIndex='firstSource' />}
           </div>
         </div>
         <div className='col-span-4'>
           <div className='border border-zinc-800 p-2 m-1 rounded-md'>
-            {!videoState.secondSource.file && <Dropzone videoId='secondSource' />}
+            {!videoState.secondSource.file && <Dropzone videoIndex='secondSource' />}
             <div>
               {videoState.secondSource.file && (
                 <VideoPlayer

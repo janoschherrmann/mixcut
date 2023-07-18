@@ -1,12 +1,12 @@
 'use client'
-import { useCallback, useContext } from 'react'
+import { useCallback } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import clsx from 'clsx'
 import { VideoIcon } from '@radix-ui/react-icons'
 import { useVideoContext } from '../contexts/VideoContext'
 
 type DropzoneProps = {
-  videoId: 'firstSource' | 'secondSource'
+  videoIndex: 'firstSource' | 'secondSource'
   idleText?: string
   activeDropText?: string
 }
@@ -14,8 +14,8 @@ type DropzoneProps = {
 const MAX_FILES = 1
 const MAX_FILE_SIZE = 50000000 // 50MB
 
-const Dropzone = ({
-  videoId,
+export const Dropzone = ({
+  videoIndex,
   idleText = 'Drag and drop your video here, or click to select a video',
   activeDropText = 'Drop the videos here ...'
 }: DropzoneProps) => {
@@ -27,7 +27,7 @@ const Dropzone = ({
       console.log(fileRejections)
     }
 
-    videoContext.setSource(videoId, acceptedFile)
+    videoContext.setSource(videoIndex, acceptedFile)
   }, [])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
