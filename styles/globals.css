@@ -2,6 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-white;
+  }
+  p {
+    @apply text-base text-zinc-400;
+  }
+
+  span {
+    @apply text-base text-zinc-400;
+  }
+}
+
 @layer utilities {
   .dropzone {
     @apply border border-dashed border-zinc-200 bg-zinc-100 rounded-md;
