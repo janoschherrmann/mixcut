@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "prettier": "prettier --write 'pages/**/*.{js,ts,tsx,jsx}' 'lib/**/*.{js,ts,tsx,jsx}'",
+    "prettier": "prettier --write \"pages/**/*.{js,ts,tsx,jsx}\" \"lib/**/*.{js,ts,tsx,jsx}\"",
     "prepare": "husky install"
   },
   "dependencies": {
