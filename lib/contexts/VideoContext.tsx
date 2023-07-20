@@ -1,5 +1,7 @@
-import { createContext, useContext, ReactNode, useState, RefObject } from 'react'
-import { MediaPlayerElement, MediaRemoteControl, MediaState } from 'vidstack'
+/* eslint-disable @typescript-eslint/no-empty-function */
+
+import { createContext, useContext, ReactNode, useState } from 'react'
+import { MediaRemoteControl, MediaState } from 'vidstack'
 
 type VideoState = {
   file?: File

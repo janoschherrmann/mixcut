@@ -21,14 +21,17 @@ export const Dropzone = ({
 }: DropzoneProps) => {
   const videoContext = useVideoContext()
 
-  const onDrop = useCallback((acceptedFile: File, fileRejections: FileRejection[]) => {
-    // Handle rejected files, by showing an error toast or something
-    if (fileRejections.length > 0) {
-      console.log(fileRejections)
-    }
+  const onDrop = useCallback(
+    (acceptedFile: File, fileRejections: FileRejection[]) => {
+      // Handle rejected files, by showing an error toast or something
+      if (fileRejections.length > 0) {
+        console.log(fileRejections)
+      }
 
-    videoContext.setSource(videoIndex, acceptedFile)
-  }, [])
+      videoContext.setSource(videoIndex, acceptedFile)
+    },
+    [videoIndex]
+  )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (acceptedFiles, fileRejections) => onDrop(acceptedFiles[0], fileRejections),
