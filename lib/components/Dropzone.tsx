@@ -10,7 +10,7 @@ type DropzoneProps = {
   idleText?: string
   activeDropText?: string
 }
-
+//test
 const MAX_FILES = 1
 const MAX_FILE_SIZE = 50000000 // 50MB
 
