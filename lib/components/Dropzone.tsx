@@ -4,6 +4,7 @@ import { FileRejection, useDropzone } from 'react-dropzone'
 import clsx from 'clsx'
 import { VideoIcon } from '@radix-ui/react-icons'
 import { useVideoContext } from '../contexts/VideoContext'
+import { error } from 'console'
 
 type DropzoneProps = {
 	videoIndex: 'firstSource' | 'secondSource'
@@ -24,7 +25,9 @@ export const Dropzone = ({
 	const onDrop = useCallback((acceptedFile: File, fileRejections: FileRejection[]) => {
 		// Handle rejected files, by showing an error toast or something
 		if (fileRejections.length > 0) {
-			console.log(fileRejections)
+			alert(
+				fileRejections.map((fileRejection) => fileRejection.errors.map((error) => error.message))
+			)
 		}
 
 		videoContext.setSource(videoIndex, acceptedFile)
