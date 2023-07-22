@@ -37,6 +37,7 @@ import {
 import { useVideoContext } from '../contexts/VideoContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
+import VideoFilterSlider from './VideoFilterSlider'
 
 function SettingsMenu() {
 	return (
@@ -158,6 +159,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 						<MediaSliderValue type='pointer' format='time' />
 					</div>
 				</MediaTimeSlider>
+				<VideoFilterSlider videoIndex={ videoIndex } />
 			</div>
 		</MediaPlayer>
 	)
