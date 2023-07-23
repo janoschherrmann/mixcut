@@ -14,7 +14,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    // "types": ["vidstack/globals"],
+    "types": ["vidstack/globals"],
     "plugins": [
       {
         "name": "next"
