@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useVideoContext } from '../contexts/VideoContext';
 
-type VideoFilterProps = {
+type VideoFilterSliderProps = {
   videoIndex: "firstSource" | "secondSource";
 };
 
-const VideoFilter  = ({ videoIndex }: VideoFilterProps) => {
+const VideoFilterSlider = ({ videoIndex }: VideoFilterSliderProps) => {
   const videoContext = useVideoContext();
   const [isBlackAndWhite, setIsBlackAndWhite] = useState(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
@@ -44,7 +44,18 @@ const VideoFilter  = ({ videoIndex }: VideoFilterProps) => {
       requestAnimationFrame(applyBlackAndWhiteFilter);
     };
 
+    const handleLoadedMetadata = () => {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+    };
+
+    video.addEventListener('loadedmetadata', handleLoadedMetadata);
+
     requestAnimationFrame(applyBlackAndWhiteFilter);
+
+    return () => {
+      video.removeEventListener('loadedmetadata', handleLoadedMetadata);
+    };
   }, [isBlackAndWhite]);
 
   return (
@@ -65,4 +76,4 @@ const VideoFilter  = ({ videoIndex }: VideoFilterProps) => {
   );
 };
 
-export default VideoFilter ;
+export default VideoFilterSlider;
