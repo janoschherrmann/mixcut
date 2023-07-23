@@ -26,7 +26,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 
   useEffect(() => {
     if (playerState && mixcutContext[videoIndex].remote) {
-		mixcutContext.setPlayerState(videoIndex, playerState)
+      mixcutContext.setPlayerState(videoIndex, playerState)
     }
 
     if (remote && !mixcutContext[videoIndex].remote) {
@@ -36,15 +36,16 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 
   const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
 
-  if(mixcutContext.ffmpeg){
-	mixcutContext.addToQueue(async () => 
-	filter_BlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
-	.then((audioFile) => {
-		mixcutContext.setAudioSource(videoIndex, audioFile)
-	  })
-	  .catch((error) => {
-		alert(error)
-	  }))
+  if (mixcutContext.ffmpeg) {
+    mixcutContext.addToQueue(async () =>
+      filter_BlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
+        .then((audioFile) => {
+          mixcutContext.setAudioSource(videoIndex, audioFile)
+        })
+        .catch((error) => {
+          alert(error)
+        })
+    )
   }
 
   return (
