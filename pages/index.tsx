@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react'
-
+import { useState } from 'react'
 import { Dropzone } from '@/lib/components/Dropzone'
 import { VideoPlayer } from '@/lib/components/VideoPlayer'
 import { useMixcutContext } from '@/lib/contexts/MixcutContext'
 import { Source } from '@/lib/types'
-import { extractAudio } from '@/lib/utils/ffmpeg'
 import Waveform from '@/lib/components/Waveform'
 
 const Home = () => {
@@ -117,10 +115,7 @@ const Home = () => {
 							/>
 						)}
 						{mixcutState.firstSource.audioFile && (
-							<Waveform
-								audioBlob={mixcutState.firstSource.audioFile}
-								videoIndex={Source.FIRST_SOURCE}
-							/>
+							<Waveform audioBlob={mixcutState.firstSource.audioFile} videoIndex={Source.FIRST_SOURCE} />
 						)}
 						{!mixcutState.firstSource.file && <Dropzone videoIndex={Source.FIRST_SOURCE} />}
 					</div>

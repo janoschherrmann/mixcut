@@ -26,9 +26,7 @@ export const Dropzone = ({
 		(acceptedFile: File, fileRejections: FileRejection[]) => {
 			// Handle rejected files, by showing an error toast or something
 			if (fileRejections.length > 0) {
-				alert(
-					fileRejections.map((fileRejection) => fileRejection.errors.map((error) => error.message))
-				)
+				alert(fileRejections.map((fileRejection) => fileRejection.errors.map((error) => error.message)))
 			}
 
 			mixcutContext.setVideoSource(videoIndex, acceptedFile)
