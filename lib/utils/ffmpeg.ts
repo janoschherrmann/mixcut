@@ -8,14 +8,11 @@ export const loadFFmpeg = async (): Promise<FFmpeg> => {
   return ffmpeg
 }
 
-export const extractAudio = (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      // Write the file to memory
-      ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
-
-      // Run the command to extract audio
-      await ffmpeg.run(
+export const extractAudio = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => {
+  return fetchFile(videoFile)
+    .then((data) => {
+      ffmpeg.FS('writeFile', 'input.mp4', data)
+      return ffmpeg.run(
         '-i',
         'input.mp4',
         '-vn',
@@ -27,16 +24,12 @@ export const extractAudio = (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => 
         '192k',
         'output.mp3'
       )
-
-      // Read the result
+    })
+    .then(() => {
       const data = ffmpeg.FS('readFile', 'output.mp3')
-
-      // Create a Blob from the data
-      const audioBlob = new Blob([data.buffer], { type: 'audio/mpeg' })
-
-      resolve(audioBlob)
-    } catch (error) {
-      reject(error)
-    }
-  })
+      return new Blob([data.buffer], { type: 'audio/mpeg' })
+    })
+    .catch((error) => {
+      throw error
+    })
 }
