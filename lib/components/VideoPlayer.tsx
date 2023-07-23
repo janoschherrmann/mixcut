@@ -11,6 +11,7 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
+import { filter_BlackAndWhite } from '../utils/ffmpeg'
 
 type VideoPlayerProps = {
   src: string
@@ -19,21 +20,32 @@ type VideoPlayerProps = {
 
 export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
   const player = useRef<MediaPlayerElement>(null)
-  const videoContext = useMixcutContext()
+  const mixcutContext = useMixcutContext()
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
 
   useEffect(() => {
-    if (playerState && videoContext[videoIndex].remote) {
-      videoContext.setPlayerState(videoIndex, playerState)
+    if (playerState && mixcutContext[videoIndex].remote) {
+		mixcutContext.setPlayerState(videoIndex, playerState)
     }
 
-    if (remote && !videoContext[videoIndex].remote) {
-      videoContext.setRemote(videoIndex, remote)
+    if (remote && !mixcutContext[videoIndex].remote) {
+      mixcutContext.setRemote(videoIndex, remote)
     }
   }, [remote, playerState, videoIndex])
 
-  const handleRemoveVideo = () => videoContext.deleteVideoSource(videoIndex)
+  const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
+
+  if(mixcutContext.ffmpeg){
+	mixcutContext.addToQueue(async () => 
+	filter_BlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
+	.then((audioFile) => {
+		mixcutContext.setAudioSource(videoIndex, audioFile)
+	  })
+	  .catch((error) => {
+		alert(error)
+	  }))
+  }
 
   return (
     <MediaPlayer aspectRatio={16 / 9} load='eager' ref={player} src={src} controls>

@@ -33,3 +33,25 @@ export const extractAudio = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blo
       throw error
     })
 }
+
+export const filter_BlackAndWhite = async(ffmpeg: FFmpeg, videoFile: File):Promise<Blob>=>{
+  try{
+    ffmpeg.FS("writeFile","input.mp4",await fetchFile(videoFile));
+
+    await ffmpeg.run(
+      "-i",
+      "input.mp4",
+      "-vf",
+      "format=gray",
+      "output.mp4"
+    );
+    
+    const data = ffmpeg.FS("readFile", "output.mp4");
+
+    const bwVideoBlob = new Blob([data.buffer], {type:"video/mp4"});
+
+    return bwVideoBlob;
+  } catch(error){
+    throw error;
+  }
+}
