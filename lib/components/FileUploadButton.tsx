@@ -1,11 +1,12 @@
-'use client'
 import { useCallback } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
-import { useVideoContext } from '../contexts/VideoContext'
+import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
+import { Source } from '../types'
+import { extractAudio } from '../utils/ffmpeg'
 
 type DropzoneProps = {
-  videoIndex: 'firstSource' | 'secondSource'
+  videoIndex: Source
   idleText?: string
   activeDropText?: string
 }
@@ -14,7 +15,7 @@ const MAX_FILES = 1
 const MAX_FILE_SIZE = 50000000 // 50MB
 
 export const FileUploadButton = ({ videoIndex }: DropzoneProps) => {
-  const videoContext = useVideoContext()
+  const mixcutContext = useMixcutContext()
 
   const onDrop = useCallback((acceptedFile: File, fileRejections: FileRejection[]) => {
     // Handle rejected files, by showing an error toast or something
@@ -22,7 +23,19 @@ export const FileUploadButton = ({ videoIndex }: DropzoneProps) => {
       console.log(fileRejections)
     }
 
-    videoContext.setSource(videoIndex, acceptedFile)
+    mixcutContext.setVideoSource(videoIndex, acceptedFile)
+
+    if (mixcutContext.ffmpeg) {
+      mixcutContext.addToQueue(async () =>
+        extractAudio(mixcutContext.ffmpeg!, acceptedFile)
+          .then((audioFile) => {
+            mixcutContext.setAudioSource(videoIndex, audioFile)
+          })
+          .catch((error) => {
+            alert(error)
+          })
+      )
+    }
   }, [])
 
   const { getRootProps, getInputProps } = useDropzone({

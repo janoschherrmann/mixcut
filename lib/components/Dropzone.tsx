@@ -1,12 +1,13 @@
-'use client'
 import { useCallback } from 'react'
 import { FileRejection, useDropzone } from 'react-dropzone'
 import clsx from 'clsx'
 import { VideoIcon } from '@radix-ui/react-icons'
-import { useVideoContext } from '../contexts/VideoContext'
+import { useMixcutContext } from '../contexts/MixcutContext'
+import { Source } from '../types'
+import { extractAudio } from '../utils/ffmpeg'
 
 type DropzoneProps = {
-  videoIndex: 'firstSource' | 'secondSource'
+  videoIndex: Source
   idleText?: string
   activeDropText?: string
 }
@@ -19,7 +20,7 @@ export const Dropzone = ({
   idleText = 'Drag and drop your video here, or click to select a video',
   activeDropText = 'Drop the videos here ...'
 }: DropzoneProps) => {
-  const videoContext = useVideoContext()
+  const mixcutContext = useMixcutContext()
 
   const onDrop = useCallback(
     (acceptedFile: File, fileRejections: FileRejection[]) => {
@@ -28,9 +29,21 @@ export const Dropzone = ({
         console.log(fileRejections)
       }
 
-      videoContext.setSource(videoIndex, acceptedFile)
+      mixcutContext.setVideoSource(videoIndex, acceptedFile)
+
+      if (mixcutContext.ffmpeg) {
+        mixcutContext.addToQueue(async () =>
+          extractAudio(mixcutContext.ffmpeg!, acceptedFile)
+            .then((audioFile) => {
+              mixcutContext.setAudioSource(videoIndex, audioFile)
+            })
+            .catch((error) => {
+              alert(error)
+            })
+        )
+      }
     },
-    [videoIndex]
+    [videoIndex, mixcutContext]
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
