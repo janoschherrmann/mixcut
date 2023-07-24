@@ -13,7 +13,12 @@
   "dependencies": {
     "@ffmpeg/core": "^0.11.0",
     "@ffmpeg/ffmpeg": "^0.11.6",
+    "@headlessui/react": "^1.7.15",
+    "@headlessui/tailwindcss": "^0.1.3",
+    "@heroicons/react": "^2.0.18",
+    "@radix-ui/react-dialog": "^1.0.4",
     "@radix-ui/react-icons": "^1.3.0",
+    "@radix-ui/react-separator": "^1.0.3",
     "@radix-ui/react-toast": "^1.1.4",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@vidstack/react": "^0.6.13",
