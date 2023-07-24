@@ -39,8 +39,8 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
   if (mixcutContext.ffmpeg) {
     mixcutContext.addToQueue(async () =>
       filter_BlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
-        .then((audioFile) => {
-          mixcutContext.setAudioSource(videoIndex, audioFile)
+        .then((bwVideoFile) => {
+          mixcutContext.setVideoSource(videoIndex, bwVideoFile)
         })
         .catch((error) => {
           alert(error)
