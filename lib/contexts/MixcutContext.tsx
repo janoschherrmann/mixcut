@@ -15,6 +15,7 @@ import { loadFFmpeg } from '../utils/ffmpeg'
 
 type VideoState = {
   file?: File
+  transformedFile?: Blob | File
   audioFile?: Blob
   remote?: MediaRemoteControl
   playerState?: Readonly<MediaState>
@@ -32,6 +33,7 @@ export type MixcutState = {
   addToQueue: (operation: FFmpegOperation) => Promise<void>
   deleteVideoSource: (source: Source) => void
   setVideoSource: (source: Source, file: File) => void
+  setTransformedFile: (source: Source, file: Blob | File) => void
   setAudioSource: (source: Source, file: Blob) => void
   setFFmpeg: (ffmpeg: FFmpeg) => void
   setRemote: (source: Source, remote: MediaRemoteControl) => void
@@ -55,6 +57,7 @@ export const initialMixcutState: MixcutState = {
   addToQueue: async (_operation: FFmpegOperation) => {},
   deleteVideoSource: (_source: Source) => {},
   setVideoSource: (_source: Source, _file: File) => {},
+  setTransformedFile: (_source: Source, _file: Blob | File) => {},
   setAudioSource: (_source: Source, _file: Blob) => {},
   setFFmpeg: (_ffmpeg: FFmpeg) => {},
   setRemote: (_source: Source, _remote: MediaRemoteControl) => {},
@@ -137,6 +140,18 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     []
   )
 
+  const setTransformedFile = useCallback(
+    (source: Source, file: Blob | File) =>
+      setMixcutState((prevMixcutState) => ({
+        ...prevMixcutState,
+        [source]: {
+          ...prevMixcutState[source],
+          transformedFile: file
+        }
+      })),
+    []
+  )
+
   const setAudioSource = useCallback(
     (source: Source, audioFile: Blob) =>
       setMixcutState((prevMixcutState) => ({
@@ -183,6 +198,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     isFFmpegRunning: isRunningRef.current,
     deleteVideoSource,
     setVideoSource,
+    setTransformedFile,
     setAudioSource,
     setFFmpeg,
     setRemote,

@@ -36,17 +36,21 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 
   const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
 
-  if (mixcutContext.ffmpeg) {
-    mixcutContext.addToQueue(async () =>
-      filterBlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
-        .then((bwVideoFile) => {
-          mixcutContext.setVideoSource(videoIndex, bwVideoFile)
-        })
-        .catch((error) => {
-          alert(error)
-        })
-    )
+  const handleBlackAndWhiteFilter = () => {
+    if (mixcutContext.ffmpeg) {
+      mixcutContext.addToQueue(async () =>
+        filterBlackAndWhite(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
+          .then((bwVideoFile) => {
+            mixcutContext.setTransformedFile(videoIndex, bwVideoFile)
+          })
+          .catch((error) => {
+            alert(error)
+          })
+      )
+    }
   }
+
+  console.log(mixcutContext[videoIndex].transformedFile)
 
   return (
     <MediaPlayer aspectRatio={16 / 9} load='eager' ref={player} src={src} controls>
@@ -56,6 +60,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
       <div className='bg-zinc-900 mt-1 rounded-md px-2 py-1 text-white flex gap-x-2'>
         <FileUploadButton videoIndex={videoIndex} />
         <Button onClick={handleRemoveVideo}>Remove video</Button>
+        <Button onClick={handleBlackAndWhiteFilter}>Remove video</Button>
       </div>
     </MediaPlayer>
   )

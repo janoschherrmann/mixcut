@@ -2,6 +2,7 @@ import { FFmpeg, fetchFile, createFFmpeg } from '@ffmpeg/ffmpeg'
 
 export const loadFFmpeg = async (): Promise<FFmpeg> => {
   const ffmpeg = createFFmpeg({
+    log: true,
     corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
   })
   await ffmpeg.load()
