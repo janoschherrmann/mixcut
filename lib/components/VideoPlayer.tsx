@@ -11,7 +11,7 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
-import { filter_BlackAndWhite } from '../utils/ffmpeg'
+import { filterBlackAndWhite } from '../utils/ffmpeg'
 
 type VideoPlayerProps = {
   src: string
@@ -38,7 +38,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 
   if (mixcutContext.ffmpeg) {
     mixcutContext.addToQueue(async () =>
-      filter_BlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
+      filterBlackAndWhite(mixcutContext.ffmpeg!, videoIndex)
         .then((bwVideoFile) => {
           mixcutContext.setVideoSource(videoIndex, bwVideoFile)
         })

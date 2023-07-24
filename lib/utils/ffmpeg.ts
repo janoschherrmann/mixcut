@@ -34,7 +34,7 @@ export const extractAudio = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blo
     })
 }
 
-export const filter_BlackAndWhite = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => {
+export const filterBlackAndWhite = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => {
   try {
     ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
 
