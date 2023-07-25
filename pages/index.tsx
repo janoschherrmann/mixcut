@@ -108,9 +108,9 @@ const Home = () => {
         <div className='col-span-4'></div>
         <div className='col-span-4'>
           <div className='border border-zinc-800 p-2 m-1 rounded-md'>
-            {mixcutState.firstSource.file && (
+            {mixcutState.firstSource.transformedFile && (
               <VideoPlayer
-                src={URL.createObjectURL(mixcutState.firstSource.file)}
+                src={URL.createObjectURL(mixcutState.firstSource.transformedFile)}
                 videoIndex={Source.FIRST_SOURCE}
               />
             )}
@@ -127,9 +127,9 @@ const Home = () => {
           <div className='border border-zinc-800 p-2 m-1 rounded-md'>
             {!mixcutState.secondSource.file && <Dropzone videoIndex={Source.SECOND_SOURCE} />}
             <div>
-              {mixcutState.secondSource.file && (
+              {mixcutState.secondSource.transformedFile && (
                 <VideoPlayer
-                  src={URL.createObjectURL(mixcutState.secondSource.file)}
+                  src={URL.createObjectURL(mixcutState.secondSource.transformedFile)}
                   videoIndex={Source.SECOND_SOURCE}
                 />
               )}
@@ -137,7 +137,6 @@ const Home = () => {
           </div>
         </div>
       </div>
-
       {/* <button onClick={doTransformation} className='text-white'>
           Do transformation
         </button>

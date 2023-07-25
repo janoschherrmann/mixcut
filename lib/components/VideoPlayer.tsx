@@ -11,6 +11,7 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
+import { filterBlackAndWhite } from '../utils/ffmpeg'
 
 type VideoPlayerProps = {
   src: string
@@ -19,21 +20,37 @@ type VideoPlayerProps = {
 
 export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
   const player = useRef<MediaPlayerElement>(null)
-  const videoContext = useMixcutContext()
+  const mixcutContext = useMixcutContext()
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
 
   useEffect(() => {
-    if (playerState && videoContext[videoIndex].remote) {
-      videoContext.setPlayerState(videoIndex, playerState)
+    if (playerState && mixcutContext[videoIndex].remote) {
+      mixcutContext.setPlayerState(videoIndex, playerState)
     }
 
-    if (remote && !videoContext[videoIndex].remote) {
-      videoContext.setRemote(videoIndex, remote)
+    if (remote && !mixcutContext[videoIndex].remote) {
+      mixcutContext.setRemote(videoIndex, remote)
     }
   }, [remote, playerState, videoIndex])
 
-  const handleRemoveVideo = () => videoContext.deleteVideoSource(videoIndex)
+  const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
+
+  const handleBlackAndWhiteFilter = () => {
+    if (mixcutContext.ffmpeg) {
+      mixcutContext.addToQueue(async () =>
+        filterBlackAndWhite(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
+          .then((bwVideoFile) => {
+            mixcutContext.setTransformedFile(videoIndex, bwVideoFile)
+          })
+          .catch((error) => {
+            alert(error)
+          })
+      )
+    }
+  }
+
+  console.log(mixcutContext[videoIndex].transformedFile)
 
   return (
     <MediaPlayer aspectRatio={16 / 9} load='eager' ref={player} src={src} controls>
@@ -43,6 +60,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
       <div className='bg-zinc-900 mt-1 rounded-md px-2 py-1 text-white flex gap-x-2'>
         <FileUploadButton videoIndex={videoIndex} />
         <Button onClick={handleRemoveVideo}>Remove video</Button>
+        <Button onClick={handleBlackAndWhiteFilter}>Remove video</Button>
       </div>
     </MediaPlayer>
   )
