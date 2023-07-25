@@ -1,147 +1,70 @@
-import { useState } from 'react'
 import { Dropzone } from '@/lib/components/Dropzone'
 import { VideoPlayer } from '@/lib/components/VideoPlayer'
 import { useMixcutContext } from '@/lib/contexts/MixcutContext'
 import { Source } from '@/lib/types'
-import Waveform from '@/lib/components/Waveform'
+import { Button } from '@/lib/components/Button'
+import { ResetIcon } from '@radix-ui/react-icons'
+import { Container } from '@/lib/components/Container'
+import { DownloadDialog } from '@/lib/components/DownloadDialog'
+import { AudioContainer } from '@/lib/components/AudioContainer'
 
 const Home = () => {
-  const mixcutState = useMixcutContext()
-  const [outputFile, setOutputFile] = useState<string>('')
-
-  // useEffect(() => {
-  //   // const isFFmpegReady = mixcutState.ffmpeg && !isFFmpegRunning
-  //   // const needsAudioFirst = !mixcutState.firstSource.audioFile && mixcutState.firstSource.file
-  //   // const needsAudioSecond = !mixcutState.secondSource.audioFile && mixcutState.secondSource.file
-
-  //   // if (isFFmpegReady && needsAudioFirst) {
-  //   //   ffmpegQueue.add(async () => {
-  //   //     extractAudio(mixcutState.ffmpeg!, mixcutState.firstSource.file!)
-  //   //       .then((audioFile) => {
-  //   //         mixcutState.setAudioSource(Source.FIRST_SOURCE, audioFile)
-  //   //       })
-  //   //       .catch((error) => {
-  //   //         alert(error)
-  //   //       })
-  //   //       .finally(() => {
-  //   //         setIsFFmpegRunning(false)
-  //   //       })
-  //   //   })
-  //   // }
-
-  //   // if (isFFmpegReady && needsAudioSecond) {
-  //   //   ffmpegQueue.add(async () => {
-  //   //     extractAudio(mixcutState.ffmpeg!, mixcutState.secondSource.file!)
-  //   //       .then((audioFile) => {
-  //   //         mixcutState.setAudioSource(Source.SECOND_SOURCE, audioFile)
-  //   //       })
-  //   //       .catch((error) => {
-  //   //         alert(error)
-  //   //       })
-  //   //       .finally(() => {
-  //   //         setIsFFmpegRunning(false)
-  //   //       })
-  //   //   })
-  //   // }
-
-  //   // if (isFFmpegReady && needsAudioFirst) {
-  //   //   setIsFFmpegRunning(true)
-  //   //   extractAudio(mixcutState.ffmpeg!, mixcutState.firstSource.file!)
-  //   //     .then((audioFile) => {
-  //   //       mixcutState.setAudioSource(Source.FIRST_SOURCE, audioFile)
-  //   //     })
-  //   //     .catch((error) => {
-  //   //       alert(error)
-  //   //     })
-  //   //     .finally(() => {
-  //   //       setIsFFmpegRunning(false)
-  //   //     })
-  //   // }
-
-  //   // if (isFFmpegReady && needsAudioSecond) {
-  //   //   setIsFFmpegRunning(true)
-  //   //   extractAudio(mixcutState.ffmpeg!, mixcutState.secondSource.file!)
-  //   //     .then((audioFile) => {
-  //   //       mixcutState.setAudioSource(Source.SECOND_SOURCE, audioFile)
-  //   //     })
-  //   //     .catch((error) => {
-  //   //       alert(error)
-  //   //     })
-  //   //     .finally(() => {
-  //   //       setIsFFmpegRunning(false)
-  //   //     })
-  //   // }
-  // }, [mixcutState, isFFmpegRunning])
-
-  // const doTransformation = async () => {
-  //   // Load ffmpeg core
-  //   await ffmpeg.load()
-  // const doTransformation = async () => {
-
-  //   // Transcode the video file to AVI format
-  //   ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videos[0]))
-  //   await ffmpeg.run('-i', 'input.mp4', 'output.mov')
-
-  //   // Read the result
-  //   const data = ffmpeg.FS('readFile', 'output.mov')
-
-  //   // Create a URL for the transcoded video file
-  //   const url = URL.createObjectURL(new Blob([data.buffer], { type: 'video/avi' }))
-
-  //   setOutputFile(url)
-
-  //   // Create a download link and click it
-  //   const link = document.createElement('a')
-  //   link.href = url
-  //   link.download = 'output.mov'
-  //   document.body.appendChild(link)
-  //   link.click()
-
-  //   // Cleanup
-  //   URL.revokeObjectURL(url)
-  //   document.body.removeChild(link)
-  // }
+  const mixcutContext = useMixcutContext()
 
   return (
-    <main className='h-screen overflow-hidden border border-red-500'>
-      <div className='grid grid-cols-12 border border-green-500'>
-        <div className='col-span-4'></div>
-        <div className='col-span-4'>
-          <div className='border border-zinc-800 p-2 m-1 rounded-md'>
-            {mixcutState.firstSource.file && (
-              <VideoPlayer
-                src={URL.createObjectURL(mixcutState.firstSource.file)}
-                videoIndex={Source.FIRST_SOURCE}
-              />
-            )}
-            {mixcutState.firstSource.audioFile && (
-              <Waveform
-                audioBlob={mixcutState.firstSource.audioFile}
-                videoIndex={Source.FIRST_SOURCE}
-              />
-            )}
-            {!mixcutState.firstSource.file && <Dropzone videoIndex={Source.FIRST_SOURCE} />}
+    <main className='h-screen overflow-hidden flex flex-col'>
+      <header className='h-[60px]'>
+        <Container className='flex justify-between items-center'>
+          <h1 className='text-xl font-bold'>Mixcut</h1>
+          <div className='flex items-center gap-x-2'>
+            <Button>
+              <ResetIcon className='w-3 h-3' />
+              Reset videos
+            </Button>
+            <DownloadDialog />
           </div>
+        </Container>
+      </header>
+      <div className='grid grid-cols-3 flex-grow'>
+        <div className='col-span-1'>
+          <Container>
+            <h2 className='text-md font-semibold'>Video options</h2>
+          </Container>
         </div>
-        <div className='col-span-4'>
-          <div className='border border-zinc-800 p-2 m-1 rounded-md'>
-            {!mixcutState.secondSource.file && <Dropzone videoIndex={Source.SECOND_SOURCE} />}
-            <div>
-              {mixcutState.secondSource.file && (
-                <VideoPlayer
-                  src={URL.createObjectURL(mixcutState.secondSource.file)}
-                  videoIndex={Source.SECOND_SOURCE}
-                />
-              )}
+        <div className='col-span-2 flex flex-col'>
+          <div className='grid grid-cols-2'>
+            <div className='col-span-1'>
+              <Container>
+                {mixcutContext.firstSource.file && (
+                  <VideoPlayer
+                    src={URL.createObjectURL(mixcutContext.firstSource.file)}
+                    videoIndex={Source.FIRST_SOURCE}
+                  />
+                )}
+
+                {!mixcutContext.firstSource.file && <Dropzone videoIndex={Source.FIRST_SOURCE} />}
+              </Container>
             </div>
+            <div className='col-span-1'>
+              <Container>
+                {!mixcutContext.secondSource.file && <Dropzone videoIndex={Source.SECOND_SOURCE} />}
+                <div>
+                  {mixcutContext.secondSource.file && (
+                    <VideoPlayer
+                      src={URL.createObjectURL(mixcutContext.secondSource.file)}
+                      videoIndex={Source.SECOND_SOURCE}
+                    />
+                  )}
+                </div>
+              </Container>
+            </div>
+          </div>
+          <div className='flex-grow'>
+            <AudioContainer source={Source.FIRST_SOURCE} />
+            <AudioContainer source={Source.SECOND_SOURCE} />
           </div>
         </div>
       </div>
-
-      {/* <button onClick={doTransformation} className='text-white'>
-          Do transformation
-        </button>
-        {outputFile && <video src={outputFile} controls />} */}
     </main>
   )
 }
