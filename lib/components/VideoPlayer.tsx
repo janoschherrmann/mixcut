@@ -24,7 +24,7 @@ export const VideoPlayer = ({ videoIndex }: VideoPlayerProps) => {
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
 
-  let videoFile = mixcutContext[videoIndex].transformedFile
+  let videoFile = mixcutContext[videoIndex].file
   let src: string | undefined
 
   if (videoFile) {

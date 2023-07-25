@@ -25,7 +25,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
       mixcutContext.addToQueue(async () =>
         filterBlackAndWhite(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
           .then((bwVideoFile) => {
-            mixcutContext.setTransformedFile(videoIndex, bwVideoFile)
+            mixcutContext.setVideoSource(videoIndex, bwVideoFile)
           })
           .catch((error) => {
             alert(error)

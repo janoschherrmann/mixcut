@@ -54,7 +54,7 @@ const Waveform = ({ audioBlob, videoIndex }: WaveformProps) => {
       ws.load(objectUrl)
       ws.setMuted(true)
     }
-  }, [audioBlob, wavesurfer])
+  }, [audioBlob, wavesurfer, videoIndex])
 
   const handlePlayPause = () => {
     if (isPlaying) {

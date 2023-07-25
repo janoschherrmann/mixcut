@@ -15,12 +15,13 @@ import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { loadFFmpeg } from '../utils/ffmpeg'
 
 type VideoState = {
-  file?: File
-  transformedFile?: Blob
+  file?: File | Blob
   audioFile?: Blob
   waveSurfer?: WaveSurfer
   remote?: MediaRemoteControl
   playerState?: Readonly<MediaState>
+  hasError: boolean
+  errorMessage: string
 }
 
 type FFmpegOperation = () => Promise<void>
@@ -33,34 +34,32 @@ export type MixcutState = {
   isFFmpegRunning: boolean
   addToQueue: (operation: FFmpegOperation) => Promise<void>
   deleteVideoSource: (source: Source) => void
-  setVideoSource: (source: Source, file: File) => void
-  setTransformedFile: (source: Source, file: Blob | File) => void
+  setVideoSource: (source: Source, file: File | Blob) => void
   setAudioSource: (source: Source, file: Blob) => void
   setFFmpeg: (ffmpeg: FFmpeg) => void
   setWaveSurfer: (source: Source, waveSurfer: WaveSurfer) => void
   setRemote: (source: Source, remote: MediaRemoteControl) => void
   setPlayerState: (source: Source, playerState: Readonly<MediaState>) => void
-  resetVideos: () => void
 }
 
 export const initialMixcutState: MixcutState = {
   firstSource: {
-    file: undefined
+    hasError: false,
+    errorMessage: ''
   },
   secondSource: {
-    file: undefined
+    hasError: false,
+    errorMessage: ''
   },
   isFFmpegRunning: false,
   addToQueue: async (_operation: FFmpegOperation) => {},
   deleteVideoSource: (_source: Source) => {},
-  setVideoSource: (_source: Source, _file: File) => {},
-  setTransformedFile: (_source: Source, _file: Blob | File) => {},
+  setVideoSource: (_source: Source, _file: File | Blob) => {},
   setAudioSource: (_source: Source, _file: Blob) => {},
   setFFmpeg: (_ffmpeg: FFmpeg) => {},
   setWaveSurfer: (_source: Source, _waveSurfer: WaveSurfer) => {},
   setRemote: (_source: Source, _remote: MediaRemoteControl) => {},
-  setPlayerState: (_source: Source, _playerState: Readonly<MediaState>) => {},
-  resetVideos: () => {}
+  setPlayerState: (_source: Source, _playerState: Readonly<MediaState>) => {}
 }
 
 const MixcutContext = createContext<MixcutState>(initialMixcutState)
@@ -119,7 +118,6 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
         [source]: {
           ...prevMixcutState[source],
           file: undefined,
-          transformedFile: undefined,
           audioFile: undefined
         }
       })),
@@ -127,7 +125,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
   )
 
   const setVideoSource = useCallback(
-    (source: Source, file: File) =>
+    (source: Source, file: File | Blob) =>
       setMixcutState((prevMixcutState) => ({
         ...prevMixcutState,
         [source]: {
@@ -135,18 +133,6 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
           audioFile: undefined,
           hasError: false,
           errorMessage: ''
-        }
-      })),
-    []
-  )
-
-  const setTransformedFile = useCallback(
-    (source: Source, file: Blob | File) =>
-      setMixcutState((prevMixcutState) => ({
-        ...prevMixcutState,
-        [source]: {
-          ...prevMixcutState[source],
-          transformedFile: file
         }
       })),
     []
@@ -204,33 +190,17 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     []
   )
 
-  const resetVideos = useCallback(() => {
-    setMixcutState((prevMixcutState) => ({
-      ...prevMixcutState,
-      firstSource: {
-        ...prevMixcutState.firstSource,
-        transformedFile: prevMixcutState.firstSource.file
-      },
-      secondSource: {
-        ...prevMixcutState.secondSource,
-        transformedFile: prevMixcutState.secondSource.file
-      }
-    }))
-  }, [])
-
   const value = {
     ...mixcutState,
     addToQueue,
     isFFmpegRunning: isRunningRef.current,
     deleteVideoSource,
     setVideoSource,
-    setTransformedFile,
     setAudioSource,
     setFFmpeg,
     setWaveSurfer,
     setRemote,
-    setPlayerState,
-    resetVideos
+    setPlayerState
   }
 
   return <MixcutContext.Provider value={value}>{children}</MixcutContext.Provider>

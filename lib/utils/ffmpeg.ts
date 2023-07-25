@@ -69,7 +69,10 @@ export const combineVideos = async (
   return new Blob([data.buffer], { type: 'video/mp4' })
 }
 
-export const filterBlackAndWhite = async (ffmpeg: FFmpeg, videoFile: File): Promise<Blob> => {
+export const filterBlackAndWhite = async (
+  ffmpeg: FFmpeg,
+  videoFile: File | Blob
+): Promise<Blob> => {
   ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
 
   await ffmpeg.run('-i', 'input.mp4', '-vf', 'format=gray', 'output.mp4')

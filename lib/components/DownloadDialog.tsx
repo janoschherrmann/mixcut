@@ -20,8 +20,8 @@ export const DownloadDialog = () => {
     if (Array.isArray(requestedDownload)) {
       mixcutContext.addToQueue(async () => {
         combineVideos(mixcutContext.ffmpeg!, [
-          mixcutContext[requestedDownload[0]].transformedFile!,
-          mixcutContext[requestedDownload[1]].transformedFile!
+          mixcutContext[requestedDownload[0]].file!,
+          mixcutContext[requestedDownload[1]].file!
         ])
           .then((outputFile) => {
             downloadFile(outputFile)
@@ -33,8 +33,8 @@ export const DownloadDialog = () => {
     } else {
       downloadFile(
         requestedDownload === Source.FIRST_SOURCE
-          ? mixcutContext.firstSource.transformedFile!
-          : mixcutContext.secondSource.transformedFile!
+          ? mixcutContext.firstSource.file!
+          : mixcutContext.secondSource.file!
       )
     }
 
