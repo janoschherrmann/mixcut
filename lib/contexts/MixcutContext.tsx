@@ -9,14 +9,16 @@ import {
   useRef
 } from 'react'
 import { MediaRemoteControl, MediaState } from 'vidstack'
+import WaveSurfer from 'wavesurfer.js'
 import { Source } from '../types'
 import { FFmpeg } from '@ffmpeg/ffmpeg'
 import { loadFFmpeg } from '../utils/ffmpeg'
 
 type VideoState = {
   file?: File
-  transformedFile?: Blob | File
+  transformedFile?: Blob
   audioFile?: Blob
+  waveSurfer?: WaveSurfer
   remote?: MediaRemoteControl
   playerState?: Readonly<MediaState>
   hasError: boolean
@@ -28,6 +30,7 @@ type FFmpegOperation = () => Promise<void>
 export type MixcutState = {
   firstSource: VideoState
   secondSource: VideoState
+  outputFile?: Blob
   ffmpeg?: FFmpeg
   isFFmpegRunning: boolean
   addToQueue: (operation: FFmpegOperation) => Promise<void>
@@ -36,20 +39,17 @@ export type MixcutState = {
   setTransformedFile: (source: Source, file: Blob | File) => void
   setAudioSource: (source: Source, file: Blob) => void
   setFFmpeg: (ffmpeg: FFmpeg) => void
+  setWaveSurfer: (source: Source, waveSurfer: WaveSurfer) => void
   setRemote: (source: Source, remote: MediaRemoteControl) => void
   setPlayerState: (source: Source, playerState: Readonly<MediaState>) => void
 }
 
 export const initialMixcutState: MixcutState = {
   firstSource: {
-    file: undefined,
-    remote: undefined,
     hasError: false,
     errorMessage: ''
   },
   secondSource: {
-    file: undefined,
-    remote: undefined,
     hasError: false,
     errorMessage: ''
   },
@@ -60,6 +60,7 @@ export const initialMixcutState: MixcutState = {
   setTransformedFile: (_source: Source, _file: Blob | File) => {},
   setAudioSource: (_source: Source, _file: Blob) => {},
   setFFmpeg: (_ffmpeg: FFmpeg) => {},
+  setWaveSurfer: (_source: Source, _waveSurfer: WaveSurfer) => {},
   setRemote: (_source: Source, _remote: MediaRemoteControl) => {},
   setPlayerState: (_source: Source, _playerState: Readonly<MediaState>) => {}
 }
@@ -168,6 +169,18 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     setMixcutState((prevMixcutState) => ({ ...prevMixcutState, ffmpeg }))
   }, [])
 
+  const setWaveSurfer = useCallback(
+    (source: Source, waveSurfer: WaveSurfer) =>
+      setMixcutState((prevMixcutState) => ({
+        ...prevMixcutState,
+        [source]: {
+          ...prevMixcutState[source],
+          waveSurfer
+        }
+      })),
+    []
+  )
+
   const setRemote = useCallback(
     (source: Source, remote: MediaRemoteControl) =>
       setMixcutState((prevMixcutState) => ({
@@ -201,6 +214,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     setTransformedFile,
     setAudioSource,
     setFFmpeg,
+    setWaveSurfer,
     setRemote,
     setPlayerState
   }

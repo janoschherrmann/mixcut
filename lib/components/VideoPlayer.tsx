@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { type MediaPlayerElement } from 'vidstack'
+import { MediaSeekingEvent, type MediaPlayerElement } from 'vidstack'
 import {
   useMediaStore,
   useMediaRemote,
@@ -11,7 +11,7 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
-import { filterBlackAndWhite } from '../utils/ffmpeg'
+import { Cross2Icon } from '@radix-ui/react-icons'
 
 type VideoPlayerProps = {
   src: string
@@ -23,9 +23,10 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
   const mixcutContext = useMixcutContext()
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
+  const wavesurfer = mixcutContext[videoIndex].waveSurfer
 
   useEffect(() => {
-    if (playerState && mixcutContext[videoIndex].remote) {
+    if (playerState && !mixcutContext[videoIndex].playerState) {
       mixcutContext.setPlayerState(videoIndex, playerState)
     }
 
@@ -36,31 +37,40 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
 
   const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
 
-  const handleBlackAndWhiteFilter = () => {
-    if (mixcutContext.ffmpeg) {
-      mixcutContext.addToQueue(async () =>
-        filterBlackAndWhite(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
-          .then((bwVideoFile) => {
-            mixcutContext.setTransformedFile(videoIndex, bwVideoFile)
-          })
-          .catch((error) => {
-            alert(error)
-          })
-      )
-    }
+  const handleSeek = (event: MediaSeekingEvent) => {
+    const audioTime = wavesurfer?.getCurrentTime() ?? 0
+    const videoTime = event.detail
+    const seekTo = videoTime / playerState?.duration
+
+    if (audioTime === videoTime) return
+
+    wavesurfer?.seekTo(seekTo)
+    wavesurfer?.pause()
+    remote?.pause()
   }
 
-  console.log(mixcutContext[videoIndex].transformedFile)
-
   return (
-    <MediaPlayer aspectRatio={16 / 9} load='eager' ref={player} src={src} controls>
+    <MediaPlayer
+      aspectRatio={16 / 9}
+      load='eager'
+      ref={player}
+      src={src}
+      controls
+      onPlay={() => wavesurfer?.play()}
+      onPause={() => wavesurfer?.pause()}
+      onSeeking={handleSeek}>
       <MediaOutlet>
         <MediaGesture event='pointerup' action='toggle:paused' />
       </MediaOutlet>
-      <div className='bg-zinc-900 mt-1 rounded-md px-2 py-1 text-white flex gap-x-2'>
+      <div className='mt-1 flex gap-x-2 items-center'>
+        <span className='text-xs font-semibold text-indigo-500 flex bg-indigo-400/10 rounded-md px-4 py-0.5 self-stretch place-items-center'>
+          Video {videoIndex === Source.FIRST_SOURCE ? '1' : '2'}
+        </span>
         <FileUploadButton videoIndex={videoIndex} />
-        <Button onClick={handleRemoveVideo}>Remove video</Button>
-        <Button onClick={handleBlackAndWhiteFilter}>Remove video</Button>
+        <Button onClick={handleRemoveVideo} className='flex-grow'>
+          <Cross2Icon className='w-3 h-3' />
+          Remove video
+        </Button>
       </div>
     </MediaPlayer>
   )

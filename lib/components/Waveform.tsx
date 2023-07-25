@@ -1,7 +1,9 @@
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import WaveSurfer from 'wavesurfer.js'
 import { useMixcutContext } from '../contexts/MixcutContext'
 import { Source } from '../types'
+import { Button } from './Button'
+import { PauseIcon, PlayIcon } from '@radix-ui/react-icons'
 
 type WaveformProps = {
   audioBlob: Blob
@@ -10,37 +12,78 @@ type WaveformProps = {
 
 const Waveform = ({ audioBlob, videoIndex }: WaveformProps) => {
   const mixcutContext = useMixcutContext()
+  const containerRef = useRef<HTMLDivElement>(null)
+  // Workaround to force re-render of component when play/pause state changes
+  const [isPlaying, setIsPlaying] = useState(false)
 
-  const waveformRef = useRef<HTMLDivElement>(null)
-  const waveSurferRef = useRef<WaveSurfer | null>(null)
+  const wavesurfer = mixcutContext[videoIndex].waveSurfer
+  const remote = mixcutContext[videoIndex].remote
+  const playerState = mixcutContext[videoIndex].playerState
 
-  const handleTogglePlay = () => {
-    if (waveSurferRef.current) {
-      waveSurferRef.current.playPause()
-      mixcutContext[videoIndex].remote?.togglePaused()
-    }
-  }
+  wavesurfer?.on('play', () => {
+    remote?.play()
+  })
+
+  wavesurfer?.on('pause', () => {
+    remote?.pause()
+  })
+
+  wavesurfer?.on('seeking', () => {
+    const audioTime = wavesurfer?.getCurrentTime()
+    const videoTime = playerState?.currentTime
+
+    if (audioTime === videoTime) return
+
+    remote?.seek(audioTime)
+    remote?.pause()
+    wavesurfer?.pause()
+  })
 
   useEffect(() => {
-    if (waveformRef.current) {
-      waveSurferRef.current = WaveSurfer.create({
-        container: waveformRef.current,
-        waveColor: 'violet',
-        progressColor: 'purple'
+    if (containerRef.current && !wavesurfer) {
+      const ws = WaveSurfer.create({
+        container: containerRef.current,
+        waveColor: '#c7d2fe',
+        progressColor: '#6d28d9',
+        height: 'auto'
       })
 
+      mixcutContext.setWaveSurfer(videoIndex, ws)
+
       const objectUrl = URL.createObjectURL(audioBlob)
-      waveSurferRef.current.load(objectUrl)
+      ws.load(objectUrl)
+      ws.setMuted(true)
 
       // Clean up function
       return () => {
-        waveSurferRef.current?.destroy()
+        ws?.destroy()
         URL.revokeObjectURL(objectUrl) // Important to revoke the object URL to free memory
       }
     }
   }, [audioBlob])
 
-  return <div onClick={handleTogglePlay} ref={waveformRef} />
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      wavesurfer?.pause()
+      remote?.pause()
+      setIsPlaying(false)
+    } else {
+      wavesurfer?.play()
+      remote?.play()
+      setIsPlaying(true)
+    }
+  }
+
+  return (
+    <div>
+      <div ref={containerRef} />
+      <div>
+        <Button onClick={handlePlayPause}>
+          {isPlaying ? <PauseIcon className='w-3 h-3' /> : <PlayIcon className='w-3 h-3' />}
+        </Button>
+      </div>
+    </div>
+  )
 }
 
 export default Waveform
