@@ -17,8 +17,8 @@ export const AudioContainer = ({ source }: { source: Source }) => {
   const isProcessingAudio = Boolean(videoFile) && !Boolean(audioFile)
 
   const handleDownloadAudio = () => {
-    if (mixcutContext[source].audioFile) {
-      downloadFile(mixcutContext[source].audioFile!, 'mp3')
+    if (audioFile) {
+      downloadFile(audioFile!, 'mp3')
     }
   }
 

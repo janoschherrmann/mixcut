@@ -4,6 +4,7 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { Source } from '../types'
 import { extractAudio } from '../utils/ffmpeg'
+import { UploadIcon } from '@radix-ui/react-icons'
 
 type DropzoneProps = {
   videoIndex: Source
@@ -48,10 +49,13 @@ export const FileUploadButton = ({ videoIndex }: DropzoneProps) => {
   })
 
   return (
-    <Button>
+    <Button className='flex-grow'>
       <div {...getRootProps()}>
         <input {...getInputProps()} />
-        Switch video
+        <div className='flex gap-x-2 text-white items-center'>
+          <UploadIcon className='w-3 h-3' />
+          Switch video
+        </div>
       </div>
     </Button>
   )
