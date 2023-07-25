@@ -21,8 +21,6 @@ type VideoState = {
   waveSurfer?: WaveSurfer
   remote?: MediaRemoteControl
   playerState?: Readonly<MediaState>
-  hasError: boolean
-  errorMessage: string
 }
 
 type FFmpegOperation = () => Promise<void>
@@ -42,16 +40,15 @@ export type MixcutState = {
   setWaveSurfer: (source: Source, waveSurfer: WaveSurfer) => void
   setRemote: (source: Source, remote: MediaRemoteControl) => void
   setPlayerState: (source: Source, playerState: Readonly<MediaState>) => void
+  resetVideos: () => void
 }
 
 export const initialMixcutState: MixcutState = {
   firstSource: {
-    hasError: false,
-    errorMessage: ''
+    file: undefined
   },
   secondSource: {
-    hasError: false,
-    errorMessage: ''
+    file: undefined
   },
   isFFmpegRunning: false,
   addToQueue: async (_operation: FFmpegOperation) => {},
@@ -62,7 +59,8 @@ export const initialMixcutState: MixcutState = {
   setFFmpeg: (_ffmpeg: FFmpeg) => {},
   setWaveSurfer: (_source: Source, _waveSurfer: WaveSurfer) => {},
   setRemote: (_source: Source, _remote: MediaRemoteControl) => {},
-  setPlayerState: (_source: Source, _playerState: Readonly<MediaState>) => {}
+  setPlayerState: (_source: Source, _playerState: Readonly<MediaState>) => {},
+  resetVideos: () => {}
 }
 
 const MixcutContext = createContext<MixcutState>(initialMixcutState)
@@ -121,6 +119,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
         [source]: {
           ...prevMixcutState[source],
           file: undefined,
+          transformedFile: undefined,
           audioFile: undefined
         }
       })),
@@ -205,6 +204,20 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     []
   )
 
+  const resetVideos = useCallback(() => {
+    setMixcutState((prevMixcutState) => ({
+      ...prevMixcutState,
+      firstSource: {
+        ...prevMixcutState.firstSource,
+        transformedFile: prevMixcutState.firstSource.file
+      },
+      secondSource: {
+        ...prevMixcutState.secondSource,
+        transformedFile: prevMixcutState.secondSource.file
+      }
+    }))
+  }, [])
+
   const value = {
     ...mixcutState,
     addToQueue,
@@ -216,7 +229,8 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     setFFmpeg,
     setWaveSurfer,
     setRemote,
-    setPlayerState
+    setPlayerState,
+    resetVideos
   }
 
   return <MixcutContext.Provider value={value}>{children}</MixcutContext.Provider>

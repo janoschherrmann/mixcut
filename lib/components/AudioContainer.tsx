@@ -11,7 +11,7 @@ export const AudioContainer = ({ source }: { source: Source }) => {
   const mixcutContext = useMixcutContext()
 
   const audioFile = mixcutContext[source].audioFile
-  const videoFile = mixcutContext[source].file
+  const videoFile = mixcutContext[source].transformedFile
 
   const isIdleState = !videoFile && !audioFile
   const isProcessingAudio = videoFile && !audioFile

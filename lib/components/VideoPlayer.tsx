@@ -7,22 +7,30 @@ import {
   MediaOutlet,
   MediaGesture
 } from '@vidstack/react'
+import { Cross2Icon } from '@radix-ui/react-icons'
+import { Dropzone } from './Dropzone'
 import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
-import { Cross2Icon } from '@radix-ui/react-icons'
 
 type VideoPlayerProps = {
-  src: string
   videoIndex: Source
 }
 
-export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
+export const VideoPlayer = ({ videoIndex }: VideoPlayerProps) => {
   const player = useRef<MediaPlayerElement>(null)
   const mixcutContext = useMixcutContext()
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
+
+  let videoFile = mixcutContext[videoIndex].transformedFile
+  let src: string | undefined
+
+  if (videoFile) {
+    src = URL.createObjectURL(videoFile)
+  }
+
   const wavesurfer = mixcutContext[videoIndex].waveSurfer
 
   useEffect(() => {
@@ -43,11 +51,14 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
     const seekTo = videoTime / playerState?.duration
 
     if (audioTime === videoTime) return
+    if (!isFinite(seekTo)) return
 
     wavesurfer?.seekTo(seekTo)
     wavesurfer?.pause()
     remote?.pause()
   }
+
+  if (!src) return <Dropzone videoIndex={videoIndex} />
 
   return (
     <MediaPlayer
