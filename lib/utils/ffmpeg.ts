@@ -80,3 +80,37 @@ export const filterBlackAndWhite = async (ffmpeg: FFmpeg, videoFile: File): Prom
 
   return bwVideoBlob
 }
+
+export const combineCrossfadeVideos = async (
+  ffmpeg: FFmpeg,
+  videoFiles: [File | Blob, File | Blob]
+): Promise<Blob> => {
+  // Write the first file to memory
+  ffmpeg.FS('writeFile', 'input1.mp4', await fetchFile(videoFiles[0]))
+
+  // Write the second file to memory
+  ffmpeg.FS('writeFile', 'input2.mp4', await fetchFile(videoFiles[1]))
+
+  // Run the command to combine the videos
+  await ffmpeg.run(
+    '-i',
+    'input1.mp4',
+    '-i',
+    'input2.mp4',
+    '-filter_complex',
+    '[0:v]fade=t=out:st=4:d=1:alpha=1[va0];[1:v]fade=t=in:st=0:d=1:alpha=1[va1];[va0][va1]overlay[outv]',
+    '-map',
+    '[outv]',
+    '-map',
+    '1:a',
+    'output.mp4'
+  )
+
+  // Read the result
+  const data = ffmpeg.FS('readFile', 'output.mp4')
+
+  // Create a Blob from the data
+  const combinedCrossfadeVideoBlob = new Blob([data.buffer], { type: 'video/mp4' })
+
+  return combinedCrossfadeVideoBlob
+}

@@ -5,7 +5,7 @@ import { DownloadIcon, CheckIcon } from '@radix-ui/react-icons'
 import { Button } from './Button'
 import { Source } from '../types'
 import { downloadFile } from '../utils/general'
-import { combineVideos } from '../utils/ffmpeg'
+import { combineVideos, combineCrossfadeVideos } from '../utils/ffmpeg'
 
 type RequestedDownload =
   | Source
@@ -38,6 +38,24 @@ export const DownloadDialog = () => {
       )
     }
 
+    setOpen(false)
+  }
+
+  const handleCrossfadeDownloadRequest = async (requestedDownload: RequestedDownload) => {
+    if (Array.isArray(requestedDownload)) {
+      mixcutContext.addToQueue(async () => {
+        combineCrossfadeVideos(mixcutContext.ffmpeg!, [
+          mixcutContext[requestedDownload[0]].transformedFile!,
+          mixcutContext[requestedDownload[1]].transformedFile!
+        ])
+          .then((outputFile) => {
+            downloadFile(outputFile)
+          })
+          .catch((error) => {
+            alert(error)
+          })
+      })
+    }
     setOpen(false)
   }
 
@@ -109,6 +127,26 @@ export const DownloadDialog = () => {
                           handleDownloadRequest([Source.SECOND_SOURCE, Source.FIRST_SOURCE])
                         }>
                         Combined video <br /> (Second + First)
+                      </Button>
+                      <Button
+                        className='text-sm font-semibold bg-zinc-700 text-white hover:bg-zinc-600'
+                        onClick={() =>
+                          handleCrossfadeDownloadRequest([
+                            Source.FIRST_SOURCE,
+                            Source.SECOND_SOURCE
+                          ])
+                        }>
+                        Combined video with Crossfade <br /> (First + Seoncd)
+                      </Button>
+                      <Button
+                        className='text-sm font-semibold bg-zinc-700 text-white hover:bg-zinc-600'
+                        onClick={() =>
+                          handleCrossfadeDownloadRequest([
+                            Source.SECOND_SOURCE,
+                            Source.FIRST_SOURCE
+                          ])
+                        }>
+                        Combined video with Crossfade <br /> (Second + First)
                       </Button>
                     </div>
                   </div>
