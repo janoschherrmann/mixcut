@@ -2,6 +2,7 @@ import { FFmpeg, fetchFile, createFFmpeg } from '@ffmpeg/ffmpeg'
 
 export const loadFFmpeg = async (): Promise<FFmpeg> => {
   const ffmpeg = createFFmpeg({
+    log: true,
     corePath: 'https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.11.0/dist/ffmpeg-core.js'
   })
   await ffmpeg.load()
@@ -81,4 +82,22 @@ export const filterBlackAndWhite = async (
   const bwVideoBlob = new Blob([data.buffer], { type: 'video/mp4' })
 
   return bwVideoBlob
+}
+
+export const filterSepia = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<Blob> => {
+  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
+
+  await ffmpeg.run(
+    '-i',
+    'input.mp4',
+    '-vf',
+    'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
+    'output.mp4'
+  )
+
+  const data = ffmpeg.FS('readFile', 'output.mp4')
+
+  const SVideoBlob = new Blob([data.buffer], { type: 'video/mp4' })
+
+  return SVideoBlob
 }
