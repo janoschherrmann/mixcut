@@ -99,6 +99,8 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
       isRunningRef.current = false
       if (queueRef.current.length > 0) {
         processQueue()
+      } else {
+        console.log('Finished processing queue')
       }
     }
   }, [])
@@ -124,31 +126,26 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
     []
   )
 
-  const setVideoSource = useCallback(
-    (source: Source, file: File | Blob) =>
-      setMixcutState((prevMixcutState) => ({
-        ...prevMixcutState,
-        [source]: {
-          file,
-          audioFile: undefined,
-          hasError: false,
-          errorMessage: ''
-        }
-      })),
-    []
-  )
+  const setVideoSource = (source: Source, file: File | Blob) =>
+    setMixcutState((prevMixcutState) => ({
+      ...prevMixcutState,
+      [source]: {
+        file,
+        audioFile: undefined,
+        hasError: false,
+        errorMessage: ''
+      }
+    }))
 
-  const setAudioSource = useCallback(
-    (source: Source, audioFile: Blob) =>
-      setMixcutState((prevMixcutState) => ({
-        ...prevMixcutState,
-        [source]: {
-          ...prevMixcutState[source],
-          audioFile
-        }
-      })),
-    []
-  )
+  const setAudioSource = (source: Source, audioFile: Blob) => {
+    setMixcutState((prevMixcutState) => ({
+      ...prevMixcutState,
+      [source]: {
+        ...prevMixcutState[source],
+        audioFile
+      }
+    }))
+  }
 
   const setFFmpeg = useCallback((ffmpeg: FFmpeg) => {
     setMixcutState((prevMixcutState) => ({ ...prevMixcutState, ffmpeg }))
@@ -195,7 +192,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
       addToQueue(async () =>
         extractAudio(mixcutState.ffmpeg!, mixcutState.firstSource.file!)
           .then((audioFile) => {
-            mixcutState.setAudioSource(Source.FIRST_SOURCE, audioFile)
+            setAudioSource(Source.FIRST_SOURCE, audioFile)
           })
           .catch((error) => {
             alert(error)
@@ -207,7 +204,7 @@ export const MixcutProvider = ({ children }: { children: ReactNode }) => {
       addToQueue(async () =>
         extractAudio(mixcutState.ffmpeg!, mixcutState.secondSource.file!)
           .then((audioFile) => {
-            mixcutState.setAudioSource(Source.SECOND_SOURCE, audioFile)
+            setAudioSource(Source.SECOND_SOURCE, audioFile)
           })
           .catch((error) => {
             alert(error)

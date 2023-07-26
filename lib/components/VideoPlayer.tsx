@@ -34,7 +34,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
     if (remote && !mixcutContext[videoIndex].remote) {
       mixcutContext.setRemote(videoIndex, remote)
     }
-  }, [remote, playerState, videoIndex])
+  }, [remote, playerState, videoIndex, mixcutContext])
 
   const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
 
