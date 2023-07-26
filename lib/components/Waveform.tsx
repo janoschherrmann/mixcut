@@ -16,16 +16,18 @@ const Waveform = ({ audioBlob, videoIndex }: WaveformProps) => {
   // Workaround to force re-render of component when play/pause state changes
   const [isPlaying, setIsPlaying] = useState(false)
 
-  const wavesurfer = mixcutContext[videoIndex].waveSurfer
+  const wavesurfer = mixcutContext[videoIndex].wavesurfer
   const remote = mixcutContext[videoIndex].remote
   const playerState = mixcutContext[videoIndex].playerState
 
   wavesurfer?.on('play', () => {
     remote?.play()
+    setIsPlaying(true)
   })
 
   wavesurfer?.on('pause', () => {
     remote?.pause()
+    setIsPlaying(false)
   })
 
   wavesurfer?.on('seeking', () => {
@@ -53,14 +55,8 @@ const Waveform = ({ audioBlob, videoIndex }: WaveformProps) => {
       const objectUrl = URL.createObjectURL(audioBlob)
       ws.load(objectUrl)
       ws.setMuted(true)
-
-      // Clean up function
-      return () => {
-        ws?.destroy()
-        URL.revokeObjectURL(objectUrl) // Important to revoke the object URL to free memory
-      }
     }
-  }, [audioBlob])
+  }, [audioBlob, wavesurfer, videoIndex])
 
   const handlePlayPause = () => {
     if (isPlaying) {
@@ -77,7 +73,7 @@ const Waveform = ({ audioBlob, videoIndex }: WaveformProps) => {
   return (
     <div>
       <div ref={containerRef} />
-      <div>
+      <div className='pt-2'>
         <Button onClick={handlePlayPause}>
           {isPlaying ? <PauseIcon className='w-3 h-3' /> : <PlayIcon className='w-3 h-3' />}
         </Button>

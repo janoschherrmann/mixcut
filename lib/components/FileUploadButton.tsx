@@ -27,7 +27,6 @@ export const FileUploadButton = ({ videoIndex }: DropzoneProps) => {
     }
 
     mixcutContext.setVideoSource(videoIndex, acceptedFile)
-    mixcutContext.setTransformedFile(videoIndex, acceptedFile)
 
     if (mixcutContext.ffmpeg) {
       mixcutContext.addToQueue(async () =>

@@ -20,8 +20,8 @@ export const DownloadDialog = () => {
     if (Array.isArray(requestedDownload)) {
       mixcutContext.addToQueue(async () => {
         combineVideos(mixcutContext.ffmpeg!, [
-          mixcutContext[requestedDownload[0]].transformedFile!,
-          mixcutContext[requestedDownload[1]].transformedFile!
+          mixcutContext[requestedDownload[0]].file!,
+          mixcutContext[requestedDownload[1]].file!
         ])
           .then((outputFile) => {
             downloadFile(outputFile)
@@ -70,7 +70,7 @@ export const DownloadDialog = () => {
                 leave='ease-in duration-200'
                 leaveFrom='opacity-100 translate-y-0 sm:scale-100'
                 leaveTo='opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95'>
-                <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-zinc-800 px-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6'>
+                <Dialog.Panel className='relative transform overflow-hidden rounded-lg bg-zinc-900 px-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6'>
                   <div>
                     <div className='mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-indigo-500/20'>
                       <CheckIcon className='h-6 w-6 text-indigo-500' aria-hidden='true' />
@@ -93,7 +93,7 @@ export const DownloadDialog = () => {
                       </Button>
                       <Button
                         className=' text-sm font-semibold bg-zinc-700 text-white hover:bg-zinc-600'
-                        onClick={() => handleDownloadRequest(Source.FIRST_SOURCE)}>
+                        onClick={() => handleDownloadRequest(Source.SECOND_SOURCE)}>
                         Second video
                       </Button>
                       <Button
@@ -112,7 +112,6 @@ export const DownloadDialog = () => {
                       </Button>
                     </div>
                   </div>
-                  <Button></Button>
                 </Dialog.Panel>
               </Transition.Child>
             </div>

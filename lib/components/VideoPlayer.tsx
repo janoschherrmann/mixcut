@@ -7,11 +7,11 @@ import {
   MediaOutlet,
   MediaGesture
 } from '@vidstack/react'
+import { Cross2Icon } from '@radix-ui/react-icons'
 import { useMixcutContext } from '../contexts/MixcutContext'
 import { Button } from './Button'
 import { FileUploadButton } from './FileUploadButton'
 import { Source } from '../types'
-import { Cross2Icon } from '@radix-ui/react-icons'
 
 type VideoPlayerProps = {
   src: string
@@ -23,7 +23,8 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
   const mixcutContext = useMixcutContext()
   const remote = useMediaRemote(player)
   const playerState = useMediaStore(player)
-  const wavesurfer = mixcutContext[videoIndex].waveSurfer
+
+  const wavesurfer = mixcutContext[videoIndex].wavesurfer
 
   useEffect(() => {
     if (playerState && !mixcutContext[videoIndex].playerState) {
@@ -33,7 +34,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
     if (remote && !mixcutContext[videoIndex].remote) {
       mixcutContext.setRemote(videoIndex, remote)
     }
-  }, [remote, playerState, videoIndex])
+  }, [remote, playerState, videoIndex, mixcutContext])
 
   const handleRemoveVideo = () => mixcutContext.deleteVideoSource(videoIndex)
 
@@ -43,6 +44,7 @@ export const VideoPlayer = ({ src, videoIndex }: VideoPlayerProps) => {
     const seekTo = videoTime / playerState?.duration
 
     if (audioTime === videoTime) return
+    if (!isFinite(seekTo)) return
 
     wavesurfer?.seekTo(seekTo)
     wavesurfer?.pause()
