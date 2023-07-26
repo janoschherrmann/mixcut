@@ -131,3 +131,15 @@ export const speedUp = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<B
   // Convert it to a Blob for further usage or to be able to download it
   return new Blob([data.buffer], { type: 'video/mp4' })
 }
+
+export const invertColors = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<Blob> => {
+  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
+
+  await ffmpeg.run('-i', 'input.mp4', '-vf', 'negate', 'output.mp4')
+
+  const data = ffmpeg.FS('readFile', 'output.mp4')
+
+  const invVideoBlob = new Blob([data.buffer], { type: 'video/mp4' })
+
+  return invVideoBlob
+}
