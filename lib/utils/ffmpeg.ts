@@ -101,3 +101,20 @@ export const filterSepia = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promi
 
   return SVideoBlob
 }
+
+export const speedUp = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<Blob> => {
+  // Convert Blob or File to Uint8Array
+  const fileData = await fetchFile(videoFile)
+
+  // Write the file to memory
+  ffmpeg.FS('writeFile', 'input.mp4', fileData)
+
+  // Run the FFMpeg command, speed up the video by 2 times and audio by 2 times
+  await ffmpeg.run('-i', 'input.mp4', '-vf', 'setpts=0.5*PTS', '-af', 'atempo=2.0', 'output.mp4')
+
+  // Read the result
+  const data = ffmpeg.FS('readFile', 'output.mp4')
+
+  // Convert it to a Blob for further usage or to be able to download it
+  return new Blob([data.buffer], { type: 'video/mp4' })
+}
