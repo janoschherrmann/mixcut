@@ -84,6 +84,19 @@ export const filterBlackAndWhite = async (
   return bwVideoBlob
 }
 
+export const filterBlur = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<Blob> => {
+  ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
+
+  // Apply the blur filter
+  await ffmpeg.run('-i', 'input.mp4', '-vf', 'boxblur=10:5', 'output.mp4')
+
+  const data = ffmpeg.FS('readFile', 'output.mp4')
+
+  const blurredVideoBlob = new Blob([data.buffer], { type: 'video/mp4' })
+
+  return blurredVideoBlob
+}
+
 export const filterSepia = async (ffmpeg: FFmpeg, videoFile: File | Blob): Promise<Blob> => {
   ffmpeg.FS('writeFile', 'input.mp4', await fetchFile(videoFile))
 

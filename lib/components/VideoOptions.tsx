@@ -3,7 +3,13 @@ import { useMixcutContext } from '../contexts/MixcutContext'
 import { Separator } from '@radix-ui/react-separator'
 import { Source } from '../types'
 import { Button } from './Button'
-import { filterBlackAndWhite, filterSepia, speedUp, invertColors } from '../utils/ffmpeg'
+import {
+  filterBlackAndWhite,
+  filterBlur,
+  filterSepia,
+  speedUp,
+  invertColors
+} from '../utils/ffmpeg'
 import { Toast } from './Toast'
 
 export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
@@ -94,6 +100,25 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
     }
   }
 
+  const handleAddBlurFilter = () => {
+    if (mixcutContext.ffmpeg) {
+      handleTransformation()
+
+      mixcutContext.addToQueue(async () =>
+        filterBlur(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
+          .then((processedFile) => {
+            mixcutContext.setVideoSource(videoIndex, processedFile)
+          })
+          .catch((error) => {
+            alert(error)
+          })
+          .finally(() => {
+            // handle unsetting the processing state
+          })
+      )
+    }
+  }
+
   return (
     <div>
       <div className='pt-8'>
@@ -108,8 +133,12 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             Sepia Filter
           </Button>
 
+          <Button className='w-full' onClick={handleAddBlurFilter}>
+            Blur Filter
+          </Button>
+
           <Button className='w-full' onClick={handleSpeedUp}>
-            Speed Up x2
+            Speed Up (x2)
           </Button>
 
           <Button className='w-full' onClick={handleInvertColors}>
