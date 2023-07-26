@@ -93,7 +93,7 @@ export const DownloadDialog = () => {
                       </Button>
                       <Button
                         className=' text-sm font-semibold bg-zinc-700 text-white hover:bg-zinc-600'
-                        onClick={() => handleDownloadRequest(Source.FIRST_SOURCE)}>
+                        onClick={() => handleDownloadRequest(Source.SECOND_SOURCE)}>
                         Second video
                       </Button>
                       <Button
