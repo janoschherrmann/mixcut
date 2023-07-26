@@ -9,7 +9,7 @@ const inter = Inter({ subsets: ['latin'] })
 const App = ({ Component, pageProps }: AppProps) => {
   return (
     <MixcutProvider>
-      <ToastProvider>
+      <ToastProvider duration={100000}>
         <main className={inter.className}>
           <Component {...pageProps} />
         </main>

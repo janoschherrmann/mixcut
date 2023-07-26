@@ -11,22 +11,35 @@ import {
   invertColors
 } from '../utils/ffmpeg'
 import { Toast } from './Toast'
+import { ToastProps } from '../types'
 
 export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
   const mixcutContext = useMixcutContext()
-  const [showToast, setShowToast] = useState(false)
+  const [toast, setToast] = useState<ToastProps>({
+    title: '',
+    description: '',
+    open: false
+  })
 
-  const handleTransformation = () => {
-    setShowToast(true)
+  const handleOpenToast = () => {
+    setToast({
+      title: 'Processing video',
+      description: 'This might take a bit...',
+      open: true
+    })
+  }
 
-    setTimeout(() => {
-      setShowToast(false)
-    }, 3000)
+  const handleCloseToast = () => {
+    setToast({
+      title: '',
+      description: '',
+      open: false
+    })
   }
 
   const handleAddBlackAndWhiteFilter = () => {
     if (mixcutContext.ffmpeg) {
-      handleTransformation()
+      handleOpenToast()
 
       mixcutContext.addToQueue(async () =>
         filterBlackAndWhite(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
@@ -37,7 +50,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             alert(error)
           })
           .finally(() => {
-            // handle unsetting the processing state
+            handleCloseToast()
           })
       )
     }
@@ -45,7 +58,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
 
   const handleAddSepiaFilter = () => {
     if (mixcutContext.ffmpeg) {
-      handleTransformation()
+      handleOpenToast()
 
       mixcutContext.addToQueue(async () =>
         filterSepia(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
@@ -56,7 +69,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             alert(error)
           })
           .finally(() => {
-            // handle unsetting the processing state
+            handleCloseToast()
           })
       )
     }
@@ -64,7 +77,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
 
   const handleInvertColors = () => {
     if (mixcutContext.ffmpeg) {
-      handleTransformation()
+      handleCloseToast()
 
       mixcutContext.addToQueue(async () =>
         invertColors(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
@@ -75,7 +88,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             alert(error)
           })
           .finally(() => {
-            // handle unsetting the processing state
+            handleCloseToast()
           })
       )
     }
@@ -83,7 +96,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
 
   const handleSpeedUp = () => {
     if (mixcutContext.ffmpeg) {
-      handleTransformation()
+      handleOpenToast()
 
       mixcutContext.addToQueue(async () =>
         speedUp(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
@@ -94,7 +107,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             alert(error)
           })
           .finally(() => {
-            // handle unsetting the processing state
+            handleCloseToast()
           })
       )
     }
@@ -102,7 +115,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
 
   const handleAddBlurFilter = () => {
     if (mixcutContext.ffmpeg) {
-      handleTransformation()
+      handleOpenToast()
 
       mixcutContext.addToQueue(async () =>
         filterBlur(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
@@ -113,7 +126,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
             alert(error)
           })
           .finally(() => {
-            // handle unsetting the processing state
+            handleCloseToast()
           })
       )
     }
@@ -130,15 +143,15 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
           </Button>
 
           <Button className='w-full' onClick={handleAddSepiaFilter}>
-            Sepia Filter
+            Sepia filter
           </Button>
 
           <Button className='w-full' onClick={handleAddBlurFilter}>
-            Blur Filter
+            Blur filter
           </Button>
 
           <Button className='w-full' onClick={handleSpeedUp}>
-            Speed Up (x2)
+            Speed up (x2)
           </Button>
 
           <Button className='w-full' onClick={handleInvertColors}>
@@ -147,10 +160,10 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
         </div>
       </div>
       <Toast
-        title='Processing video'
-        description='This might take a bit...'
-        open={showToast}
-        setOpen={setShowToast}
+        title={toast.title}
+        description={toast.description}
+        open={toast.open}
+        setOpen={setToast}
       />
     </div>
   )

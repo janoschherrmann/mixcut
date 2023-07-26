@@ -6,6 +6,8 @@ import { Button } from './Button'
 import { Source } from '../types'
 import { downloadFile } from '../utils/general'
 import { combineVideos } from '../utils/ffmpeg'
+import { ToastProps } from '../types'
+import { Toast } from './Toast'
 
 type RequestedDownload =
   | Source
@@ -14,10 +16,33 @@ type RequestedDownload =
 
 export const DownloadDialog = () => {
   const mixcutContext = useMixcutContext()
-  const [open, setOpen] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [toast, setToast] = useState<ToastProps>({
+    title: '',
+    description: '',
+    open: false
+  })
+
+  const handleOpenToast = () => {
+    setToast({
+      title: 'Processing video',
+      description: 'This might take a bit...',
+      open: true
+    })
+  }
+
+  const handleCloseToast = () => {
+    setToast({
+      title: '',
+      description: '',
+      open: false
+    })
+  }
 
   const handleDownloadRequest = async (requestedDownload: RequestedDownload) => {
     if (Array.isArray(requestedDownload)) {
+      handleOpenToast()
+
       mixcutContext.addToQueue(async () => {
         combineVideos(mixcutContext.ffmpeg!, [
           mixcutContext[requestedDownload[0]].file!,
@@ -29,6 +54,9 @@ export const DownloadDialog = () => {
           .catch((error) => {
             alert(error)
           })
+          .finally(() => {
+            handleCloseToast()
+          })
       })
     } else {
       downloadFile(
@@ -38,17 +66,17 @@ export const DownloadDialog = () => {
       )
     }
 
-    setOpen(false)
+    setShowModal(false)
   }
 
   return (
     <>
-      <Button className='flex gap-x-1 text-white items-center' onClick={() => setOpen(true)}>
+      <Button className='flex gap-x-1 text-white items-center' onClick={() => setShowModal(true)}>
         <DownloadIcon className='w-3 h-3' />
         Download
       </Button>
-      <Transition.Root show={open} as={Fragment}>
-        <Dialog as='div' className='relative z-10' onClose={setOpen}>
+      <Transition.Root show={showModal} as={Fragment}>
+        <Dialog as='div' className='relative z-10' onClose={setShowModal}>
           <Transition.Child
             as={Fragment}
             enter='ease-out duration-300'
@@ -118,6 +146,12 @@ export const DownloadDialog = () => {
           </div>
         </Dialog>
       </Transition.Root>
+      <Toast
+        title={toast.title}
+        description={toast.description}
+        open={toast.open}
+        setOpen={setToast}
+      />
     </>
   )
 }
