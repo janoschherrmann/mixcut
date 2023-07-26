@@ -77,7 +77,7 @@ export const VideoOptions = ({ videoIndex }: { videoIndex: Source }) => {
 
   const handleInvertColors = () => {
     if (mixcutContext.ffmpeg) {
-      handleCloseToast()
+      handleOpenToast()
 
       mixcutContext.addToQueue(async () =>
         invertColors(mixcutContext.ffmpeg!, mixcutContext[videoIndex].file!)
