@@ -1,7 +1,15 @@
 import { Dispatch, SetStateAction } from 'react'
-import { Root, Viewport } from '@radix-ui/react-toast'
 import { GearIcon } from '@radix-ui/react-icons'
 import { ToastProps } from '../types'
+import dynamic from 'next/dynamic'
+
+const ToastRoot = dynamic(() => import('@radix-ui/react-toast').then((mod) => mod.Root), {
+  ssr: false
+})
+
+const ToastViewport = dynamic(() => import('@radix-ui/react-toast').then((mod) => mod.Viewport), {
+  ssr: false
+})
 
 export const Toast = ({
   title,
@@ -16,7 +24,7 @@ export const Toast = ({
 }) => {
   return (
     <>
-      <Root
+      <ToastRoot
         className='bg-zinc-800 border border-zinc-700 rounded-md py-2 px-4 flex items-center gap-x-3 mr-4 mb-4'
         open={open}
         onOpenChange={(open) => setOpen((prev) => ({ ...prev, open }))}>
@@ -27,8 +35,8 @@ export const Toast = ({
           <span className='font-semibold text-base text-white'>{title}</span>
           <p className='text-xs font-zinc-400'>{description}</p>
         </div>
-      </Root>
-      <Viewport className='fixed bottom-0 right-0 flex flex-col max-w-full m-0 list-none outline-none' />
+      </ToastRoot>
+      <ToastViewport className='fixed bottom-0 right-0 flex flex-col max-w-full m-0 list-none outline-none' />
     </>
   )
 }
