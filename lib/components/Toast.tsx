@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react'
+import React, { Dispatch, SetStateAction } from 'react'
 import { GearIcon } from '@radix-ui/react-icons'
 import { ToastProps } from '../types'
 import dynamic from 'next/dynamic'
